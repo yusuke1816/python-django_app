@@ -1,0 +1,4038 @@
+﻿Python Django 4超入門 掲載リスト
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-1
+from django.shortcuts import render
+
+# Create your views here.
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-2
+from django.shortcuts import render
+from django.http import HttpResponse
+
+def index(request):
+  return HttpResponse("Hello Django!!")
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-3
+from django.contrib import admin
+from django.urls import path
+
+urlpatterns = [
+  path('admin/', admin.site.urls),
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-4
+from django.contrib import admin
+from django.urls import path
+import hello.views as hello
+
+urlpatterns = [
+  path('admin/', admin.site.urls),
+  path('hello/', hello.index),
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-5
+from django.urls import path
+from . import views
+
+urlpatterns = [
+  path('', views.index, name='index'),
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-6
+from django.contrib import admin
+from django.urls import path,include
+
+urlpatterns = [
+  path('admin/', admin.site.urls),
+  path('hello/', include('hello.urls')),
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-7
+def index(request):
+  msg = request.GET['msg']
+  return HttpResponse('you typed: "' + msg + '".')
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-8
+def index(request):
+  if 'msg' in request.GET:
+    msg = request.GET['msg']
+    result = 'you typed: "' + msg + '".'
+  else:
+    result = 'please send msg parameter!'
+  return HttpResponse(result)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-9
+urlpatterns = [
+  path('<int:id>/<nickname>/', views.index, name='index'),
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-10
+def index(request, id, nickname):
+  result = 'your id: ' + str(id) + ', name: "' \
+    + nickname + '".'
+  return HttpResponse(result)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-11
+urlpatterns = [
+  path('my_name_is_<nickname>.I_am_<int:age>_years_old.',
+    views.index, name='index'),
+
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-12
+def index(request, nickname, age):
+  result = 'your account: ' + nickname + '" (' + str(age) + ').'
+  return HttpResponse(result)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-13
+INSTALLED_APPS = [
+  'django.contrib.admin',
+  ……略……,
+  'hello', #☆
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-14
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>hello</title>
+</head>
+<body>
+  <h1>hello/index</h1>
+  <p>This is sample page.</p>
+</body>
+</html>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-15
+urlpatterns = [
+  path('', views.index, name='index'),
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-16
+from django.shortcuts import render
+from django.http import HttpResponse
+
+def index(request):
+  return render(request, 'hello/index.html')
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-17
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>{{title}}</title>
+</head>
+<body>
+  <h1>{{title}}</h1>
+  <p>{{msg}}</p>
+</body>
+</html>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-18
+def index(request):
+  params = {
+    'title':'Hello/Index',
+    'msg':'これは、サンプルで作ったページです。',
+  }
+  return render(request, 'hello/index.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-19
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>{{title}}</title>
+</head>
+<body>
+  <h1>{{title}}</h1>
+  <p>{{msg}}</p>
+  <p><a href="{% url goto %}">{{goto}}</a></p>
+</body>
+</html>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-20
+from django.shortcuts import render
+from django.http import HttpResponse
+
+def index(request):
+  params = {
+    'title':'Hello/Index',
+    'msg':'これは、サンプルで作ったページです。',
+    'goto':'next',
+  }
+  return render(request, 'hello/index.html', params)
+
+def next(request):
+  params = {
+    'title':'Hello/Next',
+    'msg':'これは、もう１つのページです。',
+    'goto':'index',
+  }
+  return render(request, 'hello/index.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-21
+urlpatterns = [
+  path('', views.index, name='index'),
+  path('next', views.next, name='next'),
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-22
+body {
+  color:gray;
+  font-size:16pt;
+}
+h1 {
+  color:blue;
+  opacity:0.2;
+  font-size:36pt;
+  margin-top:-20px;
+  margin-bottom:0px;
+  text-align:right;
+}
+p {
+  margin:10px;
+}
+a {
+  color:blue;
+  text-decoration: none;
+}
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-23
+{% load static %}
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>{{title}}</title>
+  <link rel="stylesheet" type="text/css" 
+      href="{% static 'hello/css/style.css' %}" />
+</head>
+<body>
+  <h1>{{title}}</h1>
+  <p>{{msg}}</p>
+  <p><a href="{% url goto %}">{{goto}}</a></p>
+</body>
+</html>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-24
+{% load static %}
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>{{title}}</title>
+  <!-- CSS only -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.css" 
+    rel="stylesheet" crossorigin="anonymous">
+</head>
+<body class="container">
+  <h1 class="display-4 text-primary mb-4">{{title}}</h1>
+  <p class="h5">{{msg}}</p>
+  <p class="h6"><a href="{% url goto %}">{{goto}}</a></p>
+</body>
+</html>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-25
+<body class="container">
+  <h1 class="display-4 text-primary">{{title}}</h1>
+  <p class="h6 my-3">{{msg}}</p>
+  <form action="{% url 'form' %}" method="post">
+    {% csrf_token %}
+    <label for="msg" class="form-label">message: </label>
+    <input id="msg" type="text" name="msg" class="form-control">
+    <input type="submit" value="click" class="btn btn-primary">
+  </form>
+</body>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-26
+from django.shortcuts import render
+
+def index(request):
+  params = {
+    'title':'Hello/Index',
+    'msg':'お名前は？',
+  }
+  return render(request, 'hello/index.html', params)
+
+def form(request):
+  msg = request.POST['msg']
+  params = {
+    'title':'Hello/Form',
+    'msg':'こんにちは、' + msg + 'さん。',
+  }
+  return render(request, 'hello/index.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-27
+from django.urls import path
+from . import views
+
+urlpatterns = [
+  path('', views.index, name='index'),
+  path('form', views.form, name='form'),
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-28
+from django import forms
+
+class HelloForm(forms.Form):
+  name = forms.CharField(label='name')
+  mail = forms.CharField(label='mail')
+  age = forms.IntegerField(label='age')
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-29
+from django.shortcuts import render
+from .forms import HelloForm
+
+def index(request):
+  params = {
+    'title': 'Hello',
+    'message': 'your data:',
+    'form': HelloForm()
+  }
+  if (request.method == 'POST'):
+    params['message'] = '名前：' + request.POST['name'] + \
+      '<br>メール：' + request.POST['mail'] + \
+      '<br>年齢：' + request.POST['age']
+    params['form'] = HelloForm(request.POST)
+  return render(request, 'hello/index.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-30
+<body class="container">
+  <h1 class="display-4 text-primary">{{title}}</h1>
+  <p class="h5 mt-4">{{message|safe}}</p>
+  <form action="{% url 'index' %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="click" class="btn btn-primary">
+  </form>
+</body>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-31
+urlpatterns = [
+  path('', views.index, name='index'),
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-32
+<body class="container">
+  <h1 class="display-4 text-primary">{{title}}</h1>
+  <p class="h5 mt-4">{{message|safe}}</p>
+  <form action="{% url 'index' %}" method="post">
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+      <tr><td></td><td>
+        <input type="submit" value="click" class="btn btn-primary">
+      </td></tr>
+    </table>
+  </form>
+</body>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-33
+from django import forms
+
+class HelloForm(forms.Form):
+  name = forms.CharField(label='name', \
+    widget=forms.TextInput(attrs={'class':'form-control'}))
+  mail = forms.CharField(label='mail', \
+    widget=forms.TextInput(attrs={'class':'form-control'}))
+  age = forms.IntegerField(label='age', \
+    widget=forms.NumberInput(attrs={'class':'form-control'}))
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-34
+<form action="{% url 'index' %}" method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" class="btn btn-primary my-2" 
+    value="click">
+</form>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-35
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.views.generic import TemplateView
+from .forms import HelloForm
+
+class HelloView(TemplateView):
+  
+  def __init__(self):
+    self.params = {
+      'title': 'Hello',
+      'message': 'your data:',
+      'form': HelloForm()
+    }
+  
+  def get(self, request):
+    return render(request, 'hello/index.html', self.params)
+
+  def post(self, request):
+    msg = 'あなたは、<b>' + request.POST['name'] + \
+      '（' + request.POST['age'] + \
+      '）</b>さんです。<br>メールアドレスは <b>' + request.POST['mail'] + \
+      '</b> ですね。'
+    self.params['message'] = msg
+    self.params['form'] = HelloForm(request.POST)
+    return render(request, 'hello/index.html', self.params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-36
+from django.urls import path
+from .views import HelloView
+
+urlpatterns = [
+  path('', HelloView.as_view(), name='index'),
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-37――CharFieldの例
+class HelloForm(forms.Form):
+  name = forms.CharField(label='name', required=True, \
+    widget=forms.TextInput(attrs={'class':'form-control'}))
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-38――EmailFieldの例
+class HelloForm(forms.Form):
+  mail = forms.EmailField(label='mail', \
+    widget=forms.EmailInput(attrs={'class':'form-control'}))
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-39――IntegerFieldの例
+class HelloForm(forms.Form):
+  age = forms.IntegerField(label='age', min_value=0, max_value=100, \
+    widget=forms.NumberInput(attrs={'class':'form-control'}))
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-40――FloatFieldの例
+class HelloForm(forms.Form):
+  val = forms.FloatField(label='val', min_value=0, max_value=100, \
+    widget=forms.NumberInput(attrs={'class':'form-control'}))
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-41――URLFieldの例
+class HelloForm(forms.Form):
+  url = forms.URLField(label='url', \
+    widget=forms.URLInput(attrs={'class':'form-control'}))
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-42――日時のフィールド例
+class HelloForm(forms.Form):
+  d1 = forms.DateField(label='date', required=True, \
+    widget=forms.DateInput(attrs={'class':'form-control'}))
+  t1 = forms.TimeField(label='time', \
+    widget=forms.TimeInput(attrs={'class':'form-control'}))
+  dt1 = forms.DateTimeField(label='datetime', \
+    widget=forms.DateTimeInput(attrs={'class':'form-control'}))
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-43
+class HelloForm(forms.Form):
+  check = forms.BooleanField(label='Checkbox', required=False)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-44
+<body class="container">
+  <h1 class="display-4 text-primary">{{title}}</h1>
+  <p class="h5 mt-4">{{result|safe}}</p>
+  <form action="{% url 'index' %}" method="post">
+    {% csrf_token %}
+    <table>
+    {{ form.as_p }}
+    <tr><td></td><td>
+      <input type="submit" class="btn btn-primary my-2" 
+      value="click">
+    </table>
+  </form>
+</body>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-45
+class HelloView(TemplateView):
+    
+  def __init__(self):
+    self.params = {
+      'title': 'Hello',
+      'form': HelloForm(),
+      'result':None
+    }
+  
+  def get(self, request):
+    return render(request, 'hello/index.html', self.params)
+
+  def post(self, request):
+    if ('check' in request.POST):
+      self.params['result'] = 'Checked!!'
+    else:
+      self.params['result'] = 'not checked...'
+    self.params['form'] = HelloForm(request.POST)
+    return render(request, 'hello/index.html', self.params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-46
+class HelloForm(forms.Form):
+  check = forms.NullBooleanField(label='Check')
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-47
+class HelloView(TemplateView):
+    
+  def __init__(self):
+    self.params = {
+      'title': 'Hello',
+      'form': HelloForm(),
+      'result':None
+    }
+  
+  def get(self, request):
+    return render(request, 'hello/index.html', self.params)
+
+  def post(self, request):
+    chk = request.POST['check']
+    self.params['result'] = 'you selected: "' + chk + '".'
+    self.params['form'] = HelloForm(request.POST)
+    return render(request, 'hello/index.html', self.params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-48
+class HelloForm(forms.Form):
+  data=[
+    ('one', 'item 1'),
+    ('two', 'item 2'),
+    ('three', 'item 3')
+  ]
+  choice = forms.ChoiceField(label='Choice', \
+    choices=data)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-49
+class HelloView(TemplateView):
+    
+  def __init__(self):
+    self.params = {
+      'title': 'Hello',
+      'form': HelloForm(),
+      'result':None
+    }
+  
+  def get(self, request):
+    return render(request, 'hello/index.html', self.params)
+
+  def post(self, request):
+    ch = request.POST['choice']
+    self.params['result'] = 'selected: "' + ch + '".'
+    self.params['form'] = HelloForm(request.POST)
+    return render(request, 'hello/index.html', self.params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-50
+class HelloForm(forms.Form):
+  data=[
+    ('one', 'radio 1'),
+    ('two', 'radio 2'),
+    ('three', 'radio 3')
+  ]
+  choice = forms.ChoiceField(label='radio', \
+    choices=data, widget=forms.RadioSelect())
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-51
+class HelloForm(forms.Form):
+  data=[
+    ('one', 'item 1'),
+    ('two', 'item 2'),
+    ('three', 'item 3'),
+    ('four', 'item 4'),
+    ('five', 'item 5'),
+  ]
+  choice = forms.ChoiceField(label='radio', \
+    choices=data, widget=forms.Select(attrs={'size': 5, 
+      'class':'form-select'}))
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-52
+class HelloForm(forms.Form):
+  data=[
+    ('one', 'item 1'),
+    ('two', 'item 2'),
+    ('three', 'item 3'),
+    ('four', 'item 4'),
+    ('five', 'item 5'),
+  ]
+  choice = forms.MultipleChoiceField(label='radio', \
+    choices=data, widget=forms.SelectMultiple(attrs={'size': 6,
+      'class':'form-select'}))
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-53
+class HelloView(TemplateView):
+    
+  def __init__(self):
+    self.params = {
+      'title': 'Hello',
+      'form': HelloForm(),
+      'result':None
+    }
+  
+  def get(self, request):
+    return render(request, 'hello/index.html', self.params)
+
+  def post(self, request):
+    ch = request.POST.getlist('choice')
+    self.params['result'] = 'selected: ' + str(ch) + '.'
+    self.params['form'] = HelloForm(request.POST)
+    return render(request, 'hello/index.html', self.params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-54
+def post(self, request):
+  ch = request.POST.getlist('choice')
+  result = '<ol class="list-group"><b>selected:</b>'
+  for item in ch:
+    result += '<li class="list-group-item">' + item + '</li>'
+  result += '</ol>'
+  self.params['result'] = result
+  self.params['form'] = HelloForm(request.POST)
+  return render(request, 'hello/index.html', self.params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-55
+INSTALLED_APPS = [
+  ……略……,
+  'django.contrib.sessions',
+  ……略……,
+  'hello',
+]
+
+MIDDLEWARE = [
+  '……略……,
+  'django.contrib.sessions.middleware.SessionMiddleware',
+  ……略……,
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-56
+class SessionForm(forms.Form):
+  session = forms.CharField(label='session', required=False, \
+    widget=forms.TextInput(attrs={'class':'form-control'}))
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-57
+from django.shortcuts import render
+from django.views.generic import TemplateView
+
+from .forms import SessionForm
+
+class HelloView(TemplateView):
+    
+  def __init__(self):
+    self.params = {
+      'title': 'Hello',
+      'form': SessionForm(),
+      'result':None
+    }
+  
+  def get(self, request):
+    self.params['result'] = request.session.get('last_msg', 'No message.')
+    return render(request, 'hello/index.html', self.params)
+
+  def post(self, request):
+    ses = request.POST['session']
+    self.params['result'] = 'send: "' + ses + '".'
+    request.session['last_msg'] = ses
+    self.params['form'] = SessionForm(request.POST)
+    return render(request, 'hello/index.html', self.params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-58
+def sample_middleware(get_response):
+
+  def middleware(request):
+    counter = request.session.get('counter', 0)
+    request.session['counter'] = counter + 1
+    response = get_response(request)
+    print("count: " + str(counter))
+    return response
+
+  return middleware
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト2-59
+MIDDLEWARE = [
+  ……略……,
+  'hello.views.sample_middleware', #☆
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-1
+DATABASES = {
+  'default': {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': BASE_DIR / 'db.sqlite3',
+  }
+}
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-2
+DATABASES = {
+  'default': {
+    'ENGINE': 'django.db.backends.mysql',
+    'NAME': データベース名,
+    'USER': 利用者名,
+    'PASSWORD': パスワード,
+    'HOST': ホスト名,
+    'PORT': '3306',
+  }
+}
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-3
+DATABASES = {
+  'default': {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': データベース名,
+    'USER': 利用者名,
+    'PASSWORD': パスワード,
+    'HOST': ホスト名,
+    'PORT': '5432',
+  }
+}
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-4
+from django.db import models
+
+# Create your models here.
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-5
+from django.db import models
+
+class Friend(models.Model):
+  name = models.CharField(max_length=100)
+  mail = models.EmailField(max_length=200)
+  gender = models.BooleanField()
+  age = models.IntegerField(default=0)
+  birthday = models.DateField()
+    
+  def __str__(self):
+    return '<Friend:id=' + str(self.id) + ', ' + \
+      self.name + '(' + str(self.age) + ')>'
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-6
+from django.db import migrations, models
+
+class Migration(migrations.Migration):
+
+  initial = True
+
+  dependencies = [
+  ]
+
+  operations = [
+    migrations.CreateModel(
+      name='Friend',
+      fields=[
+        ('id', models.BigAutoField(auto_created=True, 
+          primary_key=True, serialize=False, 
+            verbose_name='ID')),
+        ('name', models.CharField(max_length=100)),
+        ('mail', models.EmailField(max_length=200)),
+        ('gender', models.BooleanField()),
+        ('age', models.IntegerField(default=0)),
+        ('birthday', models.DateField()),
+      ],
+    ),
+  ]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-7
+from django.contrib import admin
+
+# Register your models here.
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-8
+from django.contrib import admin
+from .models import Friend
+
+admin.site.register(Friend)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-9
+from django.shortcuts import render
+from .models import Friend
+
+def index(request):
+  data = Friend.objects.all()
+  params = {
+    'title': 'Hello',
+    'message': 'all friends.',
+    'data': data,
+  }
+  return render(request, 'hello/index.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-10
+<body class="container">
+  <h1 class="display-4 text-primary">{{title}}</h1>
+  <p class="h5 mt-4">{{message|safe}}</p>
+  <table class="table">
+    <tr>
+      <th>ID</th>
+      <th>NAME</th>
+      <th>GENDER</th>
+      <th>MAIL</th>
+      <th>AGE</th>
+      <th>BIRTHDAY</th>
+    </tr>
+  {% for item in data %}
+    <tr>
+      <td>{{item.id}}</td>
+      <td>{{item.name}}</td>
+      <td>{% if item.gender == False %}male{% endif %}
+          {% if item.gender == True %}female{% endif %}</td>
+      <td>{{item.mail}}</td>
+      <td>{{item.age}}</td>
+      <td>{{item.birthday}}</td>
+    <tr>
+  {% endfor %}
+  </table>
+</body>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-11
+from django.urls import path
+from . import views
+
+urlpatterns = [
+  path('', views.index, name='index'),
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-12
+from django import forms
+
+class HelloForm(forms.Form):
+  id = forms.IntegerField(label='ID')
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-13
+<body class="container">
+  <h1 class="display-4 text-primary">{{title}}</h1>
+  <p class="h5 mt-4">{{message|safe}}</p>
+  <form action="{% url 'index' %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="click">
+  </form>
+  <hr>
+  <table class="table">
+  <tr>
+    <th>ID</th>
+    <th>NAME</th>
+    <th>GENDER</th>
+    <th>MAIL</th>
+    <th>AGE</th>
+    <th>BIRTHDAY</th>
+  </tr>
+  {% for item in data %}
+  <tr>
+    <td>{{item.id}}</td>
+    <td>{{item.name}}</td>
+    <td>{% if item.gender == False %}male{% endif %}
+        {% if item.gender == True %}female{% endif %}</td>
+    <td>{{item.mail}}</td>
+    <td>{{item.age}}</td>
+    <td>{{item.birthday}}</td>
+  <tr>
+  {% endfor %}
+  </table>
+</body>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-14
+from django.shortcuts import render
+from .models import Friend
+from .forms import HelloForm
+
+def index(request):
+  params = {
+    'title': 'Hello',
+    'message': 'all friends.',
+    'form':HelloForm(),
+    'data': [],
+  }
+  if (request.method == 'POST'):
+    num=request.POST['id']
+    item = Friend.objects.get(id=num)
+    params['data'] = [item]
+    params['form'] = HelloForm(request.POST)
+  else:
+    params['data'] = Friend.objects.all()
+  return render(request, 'hello/index.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-15
+from django.shortcuts import render
+from .models import Friend
+
+def index(request):
+  data = Friend.objects.all()
+  params = {
+    'title': 'Hello',
+    'data': data,
+  }
+  return render(request, 'hello/index.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-16
+<body class="container">
+  <h1 class="display-4 text-primary">{{title}}</h1>
+  <p class="h6 mt-4">{{data}}</p>
+  <table class="table">
+    <tr>
+      <th>data</th>
+    </tr>
+  {% for item in data %}
+    <tr>
+      <td>{{item}}</td>
+    <tr>
+  {% endfor %}
+  </table>
+</body>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-17
+def index(request):
+  data = Friend.objects.all().values()
+  params = {
+    'title': 'Hello',
+    'data': data,
+  }
+  return render(request, 'hello/index.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-18
+def index(request):
+  data = Friend.objects.all().values('id', 'name')
+  params = {
+    'title': 'Hello',
+    'data': data,
+  }
+  return render(request, 'hello/index.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-19
+def index(request):
+  data = Friend.objects.all().values_list('id','name','age')
+  params = {
+    'title': 'Hello',
+    'data': data,
+  }
+  return render(request, 'hello/index.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-20
+def index(request):
+  num = Friend.objects.all().count()
+  first = Friend.objects.all().first()
+  last = Friend.objects.all().last()
+  data = [num, first, last]
+  params = {
+    'title': 'Hello',
+    'data': data,
+  }
+  return render(request, 'hello/index.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-21
+from django.shortcuts import render
+from .models import Friend
+from django.db.models import QuerySet
+
+def __new_str__(self):
+  result = ''
+  for item in self:
+    result += '<tr>'
+    for k in item:
+      result += '<td>' + str(k) + '=' + str(item[k]) + '</td>'
+    result += '</tr>'
+  return result
+
+QuerySet.__str__ = __new_str__
+
+def index(request):
+  data = Friend.objects.all().values('id', 'name', 'age')
+  params = {
+    'title': 'Hello',
+    'data': data,
+  }
+  return render(request, 'hello/index.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-22
+<body class="container">
+  <h1 class="display-4 text-primary">{{title}}</h1>
+  <table class="table">
+    {{data|safe}}
+  </table>
+</body>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-23
+from django import forms
+
+class HelloForm(forms.Form):
+  name = forms.CharField(label='Name', \
+    widget=forms.TextInput(attrs={'class':'form-control'}))
+  mail = forms.EmailField(label='Email', \
+    widget=forms.EmailInput(attrs={'class':'form-control'}))
+  gender = forms.BooleanField(label='Gender', required=False, \
+    widget=forms.CheckboxInput(attrs={'class':'form-check'}))
+  age = forms.IntegerField(label='Age', \
+    widget=forms.NumberInput(attrs={'class':'form-control'}))
+  birthday = forms.DateField(label='Birth', \
+    widget=forms.DateInput(attrs={'class':'form-control'}))
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-24
+{% load static %}
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>{{title}}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.css" 
+  rel="stylesheet" crossorigin="anonymous">
+</head>
+<body class="container">
+  <h1 class="display-4 text-primary">
+    {{title}}</h1>
+  <form action="{% url 'create' %}" 
+    method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="click"
+    class="btn btn-primary mt-2">
+  </form>
+</body>
+</html>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-25
+<body class="container">
+  <h1 class="display-4 text-primary">
+    {{title}}</h1>
+  <table class="table">
+    <tr>
+      <th>data</th>
+    </tr>
+  {% for item in data %}
+    <tr>
+      <td>{{item}}</td>
+    <tr>
+  {% endfor %}
+  </table>
+</body>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-26
+from django.shortcuts import render
+from django.shortcuts import redirect
+from .models import Friend
+from .forms import HelloForm
+
+def index(request):
+  data = Friend.objects.all()
+  params = {
+    'title': 'Hello',
+    'data': data,
+  }
+  return render(request, 'hello/index.html', params)
+
+# create model
+def create(request):
+  params = {
+    'title': 'Hello',
+    'form': HelloForm(),
+  }
+  if (request.method == 'POST'):
+    name = request.POST['name']
+    mail = request.POST['mail']
+    gender = 'gender' in request.POST
+    age = int(request.POST['age'])
+    birth = request.POST['birthday']
+    friend = Friend(name=name,mail=mail,gender=gender,\
+      age=age,birthday=birth)
+    friend.save()
+    return redirect(to='/hello')
+  return render(request, 'hello/create.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-27
+urlpatterns = [
+  path('', views.index, name='index'),
+  path('create', views.create, name='create'),
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-28
+from django import forms
+from.models import Friend
+
+class FriendForm(forms.ModelForm):
+  class Meta:
+    model = Friend
+    fields = ['name','mail','gender','age','birthday']
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-29
+# from .forms import HelloForm  #この文を削除する
+from .forms import FriendForm  #この文を新たに追記
+
+def create(request):
+  if (request.method == 'POST'):
+    obj = Friend()
+    friend = FriendForm(request.POST, instance=obj)
+    friend.save()
+    return redirect(to='/hello')
+  params = {
+    'title': 'Hello',
+    'form': FriendForm(),
+  }
+  return render(request, 'hello/create.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-30
+<body class="container">
+  <h1 class="display-4 text-primary">
+    {{title}}</h1>
+  <form action="{% url 'create' %}" 
+    method="post">
+  {% csrf_token %}
+    <table class="table">
+    {{ form.as_table }}
+      <tr><th><td>
+        <input type="submit" value="click"
+          class="btn btn-primary mt-2">
+      </td></th></tr>
+    </table>
+  </form>
+</body>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-31
+urlpatterns = [
+  path('', views.index, name='index'),
+  path('create', views.create, name='create'),
+  path('edit/<int:num>', views.edit, name='edit'),
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-32
+<body class="container">
+  <h1 class="display-4 text-primary">
+    {{title}}</h1>
+  <table class="table">
+    <tr>
+      <th>data</th>
+    </tr>
+  {% for item in data %}
+    <tr>
+      <td>{{item}}</td>
+      <td><a href="{% url 'edit' item.id %}">Edit</a></td>
+    <tr>
+  {% endfor %}
+  </table>
+</body>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-33
+{% load static %}
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>{{title}}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.css" 
+  rel="stylesheet" crossorigin="anonymous">
+</head>
+<body class="container">
+  <h1 class="display-4 text-primary">
+    {{title}}</h1>
+  <form action="{% url 'edit' id %}" 
+      method="post">
+  {% csrf_token %}
+    <table class="table">
+    {{ form.as_table }}
+      <tr><th><td>
+        <input type="submit" value="click"
+          class="btn btn-primary mt-2">
+      </td></th></tr>
+    </table>
+  </form>
+</body>
+</html>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-34
+def edit(request, num):
+  obj = Friend.objects.get(id=num)
+  if (request.method == 'POST'):
+    friend = FriendForm(request.POST, instance=obj)
+    friend.save()
+    return redirect(to='/hello')
+  params = {
+    'title': 'Hello',
+    'id':num,
+    'form': FriendForm(instance=obj),
+  }
+  return render(request, 'hello/edit.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-35
+urlpatterns = [
+  path('', views.index, name='index'),
+  path('create', views.create, name='create'),
+  path('edit/<int:num>', views.edit, name='edit'),
+  path('delete/<int:num>', views.delete, name='delete'),
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-36
+<body class="container">
+  <h1 class="display-4 text-primary">
+    {{title}}</h1>
+  <table class="table">
+    <tr>
+      <th>data</th><th></th><th></th>
+    </tr>
+  {% for item in data %}
+    <tr>
+      <td>{{item}}</td>
+      <td><a href="{% url 'edit' item.id %}">Edit</a></td>
+      <td><a href="{% url 'delete' item.id %}">Delete</a></td>
+    <tr>
+  {% endfor %}
+  </table>
+</body>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-37
+{% load static %}
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>{{title}}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.css" 
+  rel="stylesheet" crossorigin="anonymous">
+</head>
+<body class="container">
+  <h1 class="display-4 text-primary">
+    {{title}}</h1>
+  <p>※以下のレコードを削除します。</p>
+  <table class="table">
+    <tr><th>ID</th><td>{{obj.id}}</td></tr>
+    <tr><th>Name</th><td>{{obj.name}}</td></tr>
+    <tr><th>Gender</th><td>
+    {% if obj.gender == False %}male{% endif %}
+    {% if obj.gender == True %}female{% endif %}</td></tr>
+    <tr><th>Email</th><td>{{obj.mail}}</td></tr>
+    <tr><th>Age</th><td>{{obj.age}}</td></tr>
+    <tr><th>Birth</th><td>{{obj.birthday}}</td></tr>
+    <form action="{% url 'delete' id %}" method="post">
+    {% csrf_token %}
+    <tr><th></th><td>
+      <input type="submit" value="click"
+        class="btn btn-primary">
+    </td></tr>
+    </form>
+  </table>
+</body>
+</html>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-38
+def delete(request, num):
+  friend = Friend.objects.get(id=num)
+  if (request.method == 'POST'):
+    friend.delete()
+    return redirect(to='/hello')
+  params = {
+    'title': 'Hello',
+    'id':num,
+    'obj': friend,
+  }
+  return render(request, 'hello/delete.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-39
+from django.views.generic import ListView
+from django.views.generic import DetailView
+
+class FriendList(ListView):
+  model = Friend
+
+class FriendDetail(DetailView):
+  model = Friend
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-40
+from .views import FriendList
+from .views import FriendDetail
+
+urlpatterns = [
+  ……略……,
+  path('list', FriendList.as_view()),  #☆
+  path('detail/<int:pk>', FriendDetail.as_view()),  #☆
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-41
+{% load static %}
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>{{title}}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.css" 
+  rel="stylesheet" crossorigin="anonymous">
+</head>
+<body class="container">
+  <h1 class="display-4 text-primary">
+    Friends List</h1>
+  <table class="table">
+    <tr>
+      <th>id</th>
+      <th>name</th>
+      <th></th>
+    </tr>
+  {% for item in object_list %}
+    <tr>
+      <th>{{item.id}}</th>
+      <td>{{item.name}}</td>
+      <td><a href="/hello/detail/{{item.id}}">detail</a></td>
+    <tr>
+  {% endfor %}
+  </table>
+</body>
+</html>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-42
+{% load static %}
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>{{title}}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.css" 
+  rel="stylesheet" crossorigin="anonymous">
+</head>
+<body class="container">
+  <h1 class="display-4 text-primary">
+      Friends List</h1>
+  <table class="table">
+    <tr>
+      <th>id</th>
+      <th>{{object.id}}</th>
+    </tr>
+    <tr>
+      <th>name</th>
+      <td>{{object.name}}</td>
+    </tr>
+    <tr>
+      <th>mail</th>
+      <td>{{object.mail}}</td>
+    </tr>
+    <tr>
+      <th>gender</th>
+      <td>{{object.gender}}</td>
+    </tr>
+    <tr>
+      <th>age</th>
+      <td>{{object.age}}</td>
+    </tr>
+  </table>
+</body>
+</html>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-43
+urlpatterns = [
+  ……略……
+  path('find', views.find, name='find'),  #☆
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-44
+class FindForm(forms.Form):
+  find = forms.CharField(label='Find', required=False, \
+    widget=forms.TextInput(attrs={'class':'form-control'}))
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-45
+{% load static %}
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>{{title}}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.css" 
+  rel="stylesheet" crossorigin="anonymous">
+</head>
+<body class="container">
+  <h1 class="display-4 text-primary">
+    {{title}}</h1>
+  <p>{{message|safe}}</p>
+  <form action="{% url 'find' %}" method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+    <input type="submit" value="click"
+      class="btn btn-primary">
+  </form>
+  <hr>
+  <table class="table">
+    <tr>
+      <th>id</th>
+      <th>name</th>
+      <th>mail</th>
+    </tr>
+  {% for item in data %}
+    <tr>
+      <th>{{item.id}}</th>
+      <td>{{item.name}}({{item.age}})</td>
+      <td>{{item.mail}}</td>
+    <tr>
+  {% endfor %}
+  </table>
+</body>
+</html>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-46
+from .forms import FindForm  #この文を追記
+
+def find(request):
+  if (request.method == 'POST'):
+    form = FindForm(request.POST)
+    find = request.POST['find']
+    data = Friend.objects.filter(name=find)
+    msg = 'Result: ' + str(data.count())
+  else:
+    msg = 'search words...'
+    form = FindForm()
+    data =Friend.objects.all()
+  params = {
+    'title': 'Hello',
+    'message': msg,
+    'form':form,
+    'data':data,
+  }
+  return render(request, 'hello/find.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-47
+def find(request):
+  if (request.method == 'POST'):
+    form = FindForm(request.POST)
+    find = request.POST['find']
+    data = Friend.objects.filter(name__contains=find)  #☆
+    msg = 'Result: ' + str(data.count())
+  else:
+    msg = 'search words...'
+    form = FindForm()
+    data =Friend.objects.all()
+  params = {
+    'title': 'Hello',
+    'message': msg,
+    'form':form,
+    'data':data,
+  }
+  return render(request, 'hello/find.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-48
+data = Friend.objects.filter(name__iexact=find)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-49
+data = Friend.objects.filter(age__lte=int(find))
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-50
+def find(request):
+  if (request.method == 'POST'):
+    form = FindForm(request.POST)
+    find = request.POST['find']
+    val = find.split()
+    data = Friend.objects.filter(age__gte=val[0], age__lte=val[1])  #☆
+    msg = 'search result: ' + str(data.count())
+  else:
+    msg = 'search words...'
+    form = FindForm()
+    data =Friend.objects.all()
+  params = {
+    'title': 'Hello',
+    'message': msg,
+    'form':form,
+    'data':data,
+  }
+  return render(request, 'hello/find.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-51
+data = Friend.objects \
+  .filter(age__gte=val[0]) \
+  .filter(age__lte=val[1])
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-52
+from django.db.models import Q #この文を冒頭に追記
+
+def find(request):
+  if (request.method == 'POST'):
+    msg = 'search result:'
+    form = FindForm(request.POST)
+    find = request.POST['find']
+    data = Friend.objects.filter\
+      (Q(name__contains=find)|Q(mail__contains=find))  #☆
+  else:
+    msg = 'search words...'
+    form = FindForm()
+    data =Friend.objects.all()
+  params = {
+    'title': 'Hello',
+    'message': msg,
+    'form':form,
+    'data':data,
+  }
+  return render(request, 'hello/find.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト3-53
+def find(request):
+  if (request.method == 'POST'):
+    msg = 'search result:'
+    form = FindForm(request.POST)
+    find = request.POST['find']
+    list = find.split()
+    data = Friend.objects.filter(name__in=list)  #☆
+  else:
+    msg = 'search words...'
+    form = FindForm()
+    data =Friend.objects.all()
+  params = {
+    'title': 'Hello',
+    'message': msg,
+    'form':form,
+    'data':data,
+  }
+  return render(request, 'hello/find.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-1
+def index(request):
+  data = Friend.objects.all().order_by('age')    #☆
+  params = {
+    'title': 'Hello',
+    'message':'',
+    'data': data,
+  }
+  return render(request, 'hello/index.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-2
+<body class="container">
+  <h1 class="display-4 text-primary">
+    {{title}}</h1>
+  <p>{{message|safe}}</p>
+  <table class="table">
+    <tr>
+      <th>id</th>
+      <th>name</th>
+      <th>age</th>
+      <th>mail</th>
+      <th>birthday</th>
+    </tr>
+  {% for item in data %}
+    <tr>
+      <td>{{item.id}}</td>
+      <td>{{item.name}}</td>
+      <td>{{item.age}}</td>
+      <td>{{item.mail}}</td>
+      <td>{{item.birthday}}</td>
+    <tr>
+  {% endfor %}
+  </table>
+</body>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-3
+def index(request):
+  data = Friend.objects.all().order_by('age').reverse()   #☆
+  params = {
+    'title': 'Hello',
+    'message':'',
+    'data': data,
+  }
+  return render(request, 'hello/index.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-4
+def find(request):
+  if (request.method == 'POST'):
+    msg = 'search result:'
+    form = FindForm(request.POST)
+    find = request.POST['find']
+    list = find.split()
+    data = Friend.objects.all()[int(list[0]):int(list[1])]    #☆
+  else:
+    msg = 'search words...'
+    form = FindForm()
+    data =Friend.objects.all()
+  params = {
+    'title': 'Hello',
+    'message': msg,
+    'form':form,
+    'data':data,
+  }
+  return render(request, 'hello/find.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-5
+<body class="container">
+  <h1 class="display-4 text-primary">
+    {{title}}</h1>
+  <p>{{message|safe}}</p>
+  <form action="{% url 'find' %}" method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <tr><th></th><td>
+    <input type="submit" value="click"
+      class="btn btn-primary mt-2"></td></tr>
+  </form>
+  <hr>
+  <table class="table">
+    <tr>
+      <th>id</th>
+      <th>name</th>
+      <th>age</th>
+      <th>mail</th>
+      <th>birthday</th>
+    </tr>
+  {% for item in data %}
+    <tr>
+      <td>{{item.id}}</td>
+      <td>{{item.name}}</td>
+      <td>{{item.age}}</td>
+      <td>{{item.mail}}</td>
+      <td>{{item.birthday}}</td>
+    <tr>
+  {% endfor %}
+  </table>
+</body>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-6
+from django.db.models import Count,Sum,Avg,Min,Max
+
+
+def index(request):
+  data = Friend.objects.all()
+  re1 = Friend.objects.aggregate(Count('age'))    #☆
+  re2 = Friend.objects.aggregate(Sum('age'))    #☆
+  re3 = Friend.objects.aggregate(Avg('age'))    #☆
+  re4 = Friend.objects.aggregate(Min('age'))    #☆
+  re5 = Friend.objects.aggregate(Max('age'))    #☆
+  msg = 'count:' + str(re1['age__count']) \
+    + '<br>Sum:' + str(re2['age__sum']) \
+    + '<br>Average:' + str(re3['age__avg']) \
+    + '<br>Min:' + str(re4['age__min']) \
+    + '<br>Max:' + str(re5['age__max'])
+  params = {
+    'title': 'Hello',
+    'message':msg,
+    'data': data,
+  }
+  return render(request, 'hello/index.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-7
+def find(request):
+  if (request.method == 'POST'):
+    msg = request.POST['find']
+    form = FindForm(request.POST)
+    sql = 'select * from hello_friend'
+    if (msg != ''):
+        sql += ' where ' + msg
+    data = Friend.objects.raw(sql)
+    msg = sql
+  else:
+    msg = 'search words...'
+    form = FindForm()
+    data =Friend.objects.all()
+  params = {
+    'title': 'Hello',
+    'message': msg,
+    'form':form,
+    'data':data,
+  }
+  return render(request, 'hello/find.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-8
+class HelloForm(forms.Form):
+  name = forms.CharField(label='Name', \
+    widget=forms.TextInput(attrs={'class':'form-control'}))
+  mail = forms.EmailField(label='Email', \
+    widget=forms.EmailInput(attrs={'class':'form-control'}))
+  gender = forms.BooleanField(label='Gender', required=False, \
+    widget=forms.CheckboxInput(attrs={'class':'form-check'}))
+  age = forms.IntegerField(label='Age', \
+    widget=forms.NumberInput(attrs={'class':'form-control'}))
+  birthday = forms.DateField(label='Birth', \
+    widget=forms.DateInput(attrs={'class':'form-control'}))
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-9
+{% load static %}
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>{{title}}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.css" 
+  rel="stylesheet" crossorigin="anonymous">
+  </head>
+<body class="container">
+  <h1 class="display-4 text-primary">
+    {{title}}</h1>
+  <p>{{message|safe}}</p>
+  <form action="{% url 'check' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_table }}
+    <input type="submit" value="click"
+        class="btn btn-primary mt-2">
+  </form>
+</body>
+</html>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-10
+path('check', views.check, name='check'),
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-11
+class CheckForm(forms.Form):
+  str = forms.CharField(label='Name',\
+    widget=forms.TextInput(attrs={'class':'form-control'}))
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-12
+from .forms import CheckForm    #☆
+
+def check(request):
+  params = {
+    'title': 'Hello',
+    'message':'check validation.',
+    'form': CheckForm(),
+  }
+  if (request.method == 'POST'):
+    form = CheckForm(request.POST)
+    params['form'] = form
+    if (form.is_valid()):
+      params['message'] = 'OK!'
+    else:
+      params['message'] = 'no good.'
+  return render(request, 'hello/check.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-13
+class CheckForm(forms.Form):
+  empty = forms.CharField(label='Empty', empty_value=True, \
+    widget=forms.TextInput(attrs={'class':'form-control'}))
+  min = forms.CharField(label='Min', min_length=10, \
+    widget=forms.TextInput(attrs={'class':'form-control'}))
+  max = forms.CharField(label='Max', max_length=10, \
+    widget=forms.TextInput(attrs={'class':'form-control'}))
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-14
+class CheckForm(forms.Form):
+  required = forms.IntegerField(label='Required', \
+    widget=forms.NumberInput(attrs={'class':'form-control'}))
+  min = forms.IntegerField(label='Min', min_value=100, \
+    widget=forms.NumberInput(attrs={'class':'form-control'}))
+  max = forms.IntegerField(label='Max', max_value=1000, \
+    widget=forms.NumberInput(attrs={'class':'form-control'}))
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-15
+class CheckForm(forms.Form):
+  date = forms.DateField(label='Date', input_formats=['%d'], \
+    widget=forms.DateInput(attrs={'class':'form-control'}))
+  time = forms.TimeField(label='Time', \
+    widget=forms.TimeInput(attrs={'class':'form-control'}))
+  datetime = forms.DateTimeField(label='DateTime', \
+    widget=forms.DateTimeInput(attrs={'class':'form-control'}))
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-16
+from django import forms    #☆
+
+class CheckForm(forms.Form):
+  str = forms.CharField(label='String', \
+    widget=forms.TextInput(attrs={'class':'form-control'}))
+  
+  def clean(self):
+    cleaned_data = super().clean()
+    str = cleaned_data['str']
+    if (str.lower().startswith('no')):
+      raise forms.ValidationError('You input "NO"!')
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-17
+class FriendForm(forms.ModelForm):
+  class Meta:
+    model = Friend
+    fields = ['name','mail','gender','age','birthday']
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-18
+class Friend(models.Model):
+  name = models.CharField(max_length=100)
+  mail = models.EmailField(max_length=200)
+  gender = models.BooleanField()
+  age = models.IntegerField(default=0)
+  birthday = models.DateField()
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-19
+def create(request):
+  if (request.method == 'POST'):
+    obj = Friend()
+    friend = FriendForm(request.POST, instance=obj)
+    friend.save()
+    return redirect(to='/hello')
+  params = {
+    'title': 'Hello',
+    'form': FriendForm(),
+  }
+  return render(request, 'hello/create.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-20
+def check(request):
+  params = {
+    'title': 'Hello',
+    'message':'check validation.',
+    'form': FriendForm(),
+  }
+  if (request.method == 'POST'):
+    obj = Friend()
+    form = FriendForm(request.POST, instance=obj)
+    params['form'] = form
+    if (form.is_valid()):
+      params['message'] = 'OK!'
+    else:
+      params['message'] = 'no good.'
+  return render(request, 'hello/check.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-21
+<body class="container">
+  <h1 class="display-4 text-primary">
+    {{title}}</h1>
+  <p>{{message|safe}}</p>
+  <form action="{% url 'check' %}" method="post">
+    {% csrf_token %}
+    <table class="table">
+    {{ form.as_table }}
+    <tr><th></th><td>
+      <input type="submit" value="click"
+        class="btn btn-primary mt-2">
+    </td></tr>
+    </table>
+  </form>
+</body>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-22
+from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
+
+class Friend(models.Model):
+  name = models.CharField(max_length=100)
+  mail = models.EmailField(max_length=200)
+  gender = models.BooleanField()
+  age = models.IntegerField(validators=[ \
+    MinValueValidator(0), \
+    MaxValueValidator(150)])
+  birthday = models.DateField()
+
+  def __str__(self):以降省略
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-23
+from django.core.validators import MinLengthValidator  #☆
+
+class Friend(models.Model):
+  name = models.CharField(max_length=100, \
+    validators=[MinLengthValidator(10)])
+  mail = models.EmailField(max_length=200, \
+    validators=[MinLengthValidator(10)])
+  gender = models.BooleanField()
+  age = models.IntegerField()
+  birthday = models.DateField()
+
+  def __str__(self):以降省略
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-24
+from django.core.validators import URLValidator  #☆
+
+class Friend(models.Model):
+  name = models.CharField(max_length=100, \
+    validators=[URLValidator()])
+  mail = models.EmailField(max_length=200)
+  gender = models.BooleanField()
+  age = models.IntegerField()
+  birthday = models.DateField()
+
+    def __str__(self):以降省略
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-25
+from django.core.validators import RegexValidator  #☆
+
+class Friend(models.Model):
+
+  name = models.CharField(max_length=100, \
+    validators=[RegexValidator(r'^[a-z]*$')])
+  mail = models.EmailField(max_length=200)
+  gender = models.BooleanField()
+  age = models.IntegerField()
+  birthday = models.DateField()
+
+  def __str__(self): 以降省略
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-26
+import re
+from django.db import models
+from django.core.validators import ValidationError
+
+def number_only(value):
+  if (re.match(r'^[0-9]*$', value) == None):
+    raise ValidationError(
+      '%(value)s is not Number!', \
+      params={'value': value},
+    )
+
+class Friend(models.Model):
+  name = models.CharField(max_length=100, \
+    validators=[number_only])
+  mail = models.EmailField(max_length=200)
+  gender = models.BooleanField()
+  age = models.IntegerField()
+  birthday = models.DateField()
+    
+  def __str__(self):
+    return '<Friend:id=' + str(self.id) + ', ' + \
+      self.name + '(' + str(self.age) + ')>'
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-27
+<body class="container">
+  <h1 class="display-4 text-primary">
+    {{title}}</h1>
+  <p>{{message|safe}}</p>
+  <ol class="list-group">
+  {% for item in form %}
+  <li class="list-group-item py-2">
+    {{ item.name }} ({{ item.value }})
+    :{{ item.errors.as_text }}</li>
+  {% endfor %}
+  </ol>
+  <table class="table mt-4">
+    <form action="{% url 'check' %}" method="post">
+    {% csrf_token %}
+    <tr><th>名前</th><td>{{ form.name }}</td></tr>
+    <tr><th>メール</th><td>{{ form.mail }}</td></tr>
+    <tr><th>性別</th><td>{{ form.gender }}</td></tr>
+    <tr><th>年齢</th><td>{{ form.age }}</td></tr>
+    <tr><th>誕生日</th><td>{{ form.birthday }}</td></tr>
+    <tr><td></td><td>
+      <input type="submit" value="click"
+        class="btn btn-primary">
+    </td></tr>
+    </form>
+  </table>
+</body>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-28
+class FriendForm(forms.ModelForm):
+  class Meta:
+    model = Friend
+    fields = ['name','mail','gender','age','birthday']
+    widgets = {
+      'name': forms.TextInput(attrs={'class':'form-control'}),
+      'mail': forms.EmailInput(attrs={'class':'form-control'}),
+      'age': forms.NumberInput(attrs={'class':'form-control'}),
+      'birthday': forms.DateInput(attrs={'class':'form-control'}),
+    }
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-29
+<body class="container">
+  <h1 class="display-4 text-primary">
+    {{title}}</h1>
+  <p>{{message|safe}}</p>
+  <ol class="list-group mb-4">
+  {% for item in form %}
+  <li class="list-group-item py-2">
+    {{ item.name }} ({{ item.value }})
+    :{{ item.errors.as_text }}</li>
+  {% endfor %}
+  </ol>
+  <form action="{% url 'check' %}" method="post">
+    {% csrf_token %}
+    <div class="form-group">名前{{ form.name }}</div>
+    <div class="form-group">メール{{ form.mail }}</div>
+    <div class="form-group">性別</th><td>{{ form.gender }}</div>
+    <div class="form-group">年齢</th><td>{{ form.age }}</div>
+    <div class="form-group">誕生日</th><td>{{ form.birthday }}</div>
+    <div class="form-group">
+      <input type="submit" value="click"
+        class="btn btn-primary">
+    </div>
+  </form>
+</body>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-30
+path('<int:num>', views.index, name='index'),
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-31
+from django.core.paginator import Paginator
+
+def index(request, num=1):
+  data = Friend.objects.all()
+  page = Paginator(data, 3)
+  params = {
+    'title': 'Hello',
+    'message':'',
+    'data': page.get_page(num),
+  }
+  return render(request, 'hello/index.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-32
+<body class="container">
+  <h1 class="display-4 text-primary">
+    {{title}}</h1>
+  <p>{{message|safe}}</p>
+  <table class="table">
+    <tr>
+      <th>id</th>
+      <th>name</th>
+      <th>age</th>
+      <th>mail</th>
+      <th>birthday</th>
+    </tr>
+  {% for item in data %}
+    <tr>
+      <td>{{item.id}}</td>
+      <td>{{item.name}}</td>
+      <td>{{item.age}}</td>
+      <td>{{item.mail}}</td>
+      <td>{{item.birthday}}</td>
+    <tr>
+  {% endfor %}
+  </table>
+  <ul class="pagination justify-content-center">
+    {% if data.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="{% url 'index' %}">
+        &laquo; first</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link" 
+      href="{% url 'index' %}{{data.previous_page_number}}">
+        &laquo; prev</a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link">
+        &laquo; first</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link">
+        &laquo; prev</a>
+    </li>
+    {% endif %}
+    <li class="page-item">
+      <a class="page-link">
+        {{data.number}}/{{data.paginator.num_pages}}</a>
+    </li>
+    {% if data.has_next %}
+    <li class="page-item">
+      <a class="page-link" 
+        href="{% url 'index' %}{{data.next_page_number }}">
+          next &raquo;</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link" 
+        href="{% url 'index' %}{{data.paginator.num_pages}}">
+          last &raquo;</a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link">
+        next &raquo;</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link">
+        last &raquo;</a>
+    </li>
+    {% endif %}
+  </ul>
+</body>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-33
+class Message(models.Model):
+  friend = models.ForeignKey(Friend, on_delete=models.CASCADE)
+  title = models.CharField(max_length=100)
+  content = models.CharField(max_length=300)
+  pub_date = models.DateTimeField(auto_now_add=True)
+  
+  def __str__(self):
+    return '<Message:id=' + str(self.id) + ', ' + \
+      self.title + '(' + str(self.pub_date) + ')>'
+  
+  class Meta:
+    ordering = ('pub_date',)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-34
+from django.db import migrations, models
+import django.db.models.deletion
+
+class Migration(migrations.Migration):
+
+  dependencies = [
+    ('hello', '0001_initial'),
+  ]
+
+  operations = [
+    migrations.AlterField(
+      model_name='friend',
+      name='age',
+      field=models.IntegerField(),
+    ),
+    migrations.CreateModel(
+      name='Message',
+      fields=[
+        ('id', models.BigAutoField(auto_created=True, primary_key=True, \
+          serialize=False, verbose_name='ID')),
+        ('title', models.CharField(max_length=100)),
+        ('content', models.CharField(max_length=300)),
+        ('pub_date', models.DateTimeField(auto_now_add=True)),
+        ('friend', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, \
+          to='hello.friend')),
+      ],
+      options={
+        'ordering': ('pub_date',),
+      },
+    ),
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-35
+from django.contrib import admin
+from .models import Friend, Message
+
+# Register your models here.
+admin.site.register(Friend)
+admin.site.register(Message)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-36
+path('message/', views.message, name='message'),
+path('message/<int:page>', views.message, name='message'),
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-37
+from.models import Friend, Message  #追加する
+
+class MessageForm(forms.ModelForm):
+  class Meta:
+    model = Message
+    fields = ['title','content','friend']
+    widgets = {
+      'title': forms.TextInput(attrs={'class':'form-control form-control-sm'}),
+      'content': forms.Textarea(attrs={'class':'form-control form-control-sm', 'rows':2}),
+      'friend': forms.Select(attrs={'class':'form-control form-control-sm'}),
+    }
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-38
+from .models import Friend, Message
+from .forms import FriendForm, MessageForm
+
+def message(request, page=1):
+  if (request.method == 'POST'):
+    obj = Message()
+    form = MessageForm(request.POST, instance=obj)
+    form.save()
+  data = Message.objects.all().reverse()
+  paginator = Paginator(data, 5)
+  params = {
+    'title': 'Message',
+    'form': MessageForm(),
+    'data': paginator.get_page(page),
+  }
+  return render(request, 'hello/message.html', params)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-39
+{% load static %}
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>{{title}}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.css" 
+  rel="stylesheet" crossorigin="anonymous">
+  </head>
+<body class="container">
+  <h1 class="display-4 text-primary">
+    {{title}}</h1>
+    <form action="{% url 'message' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="send"
+      class="btn btn-primary">
+  <div class="mt-5"></div>
+  <table class="table">
+    <tr>
+      <th class="py-1">title</th>
+      <th class="py-1">name</th>
+      <th class="py-1">datetime</th>
+    </tr>
+  {% for item in data %}
+    <tr>
+      <td class="py-2">{{item.title}}</td>
+      <td class="py-2">{{item.friend.name}}</td>
+      <td class="py-2">{{item.pub_date}}</td>
+    <tr>
+  {% endfor %}
+  </table>
+  <ul class="pagination  justify-content-center">
+    {% if data.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="{% url 'message' %}">
+        &laquo; first</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link" 
+      href="{% url 'message' %}{{data.previous_page_number}}">
+        &laquo; prev</a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link">&laquo; first</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link">&laquo; prev</a>
+    </li>
+    {% endif %}
+    <li class="page-item">
+      <a class="page-link">
+      {{data.number}}/{{data.paginator.num_pages}}</a>
+    </li>
+    {% if data.has_next %}
+    <li class="page-item">
+      <a class="page-link" 
+      href="{% url 'message' %}{{data.next_page_number }}">
+        next &raquo;</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link" 
+      href="{% url 'message' %}{{data.paginator.num_pages}}">
+        last &raquo;</a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link">next &raquo;</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link">last &raquo;</a>
+    </li>
+    {% endif %}
+  </ul>
+</body>
+</html>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト4-40
+<body class="container">
+  <h1 class="display-4 text-primary">
+    {{title}}</h1>
+  <p>{{message|safe}}</p>
+  <table class="table">
+    <tr>
+      <th>id</th>
+      <th>name</th>
+      <th>age</th>
+      <th>mail</th>
+      <th>birthday</th>
+      <th>Messages</th>
+    </tr>
+  {% for item in data %}
+    <tr>
+      <td>{{item.id}}</td>
+      <td>{{item.name}}</td>
+      <td>{{item.age}}</td>
+      <td>{{item.mail}}</td>
+      <td>{{item.birthday}}</td>
+      <td>
+        <ul>
+        {% for ob in item.message_set.all %}
+          <li>{{ob.title}}</li>
+        {% endfor %}
+        </ul>
+      </td>
+    <tr>
+  {% endfor %}
+  </table>
+  <ul class="pagination justify-content-center">
+    {% if data.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="{% url 'index' %}">
+        &laquo; first</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link" 
+      href="{% url 'index' %}{{data.previous_page_number}}">
+        &laquo; prev</a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link">&laquo; first</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link">&laquo; prev</a>
+    </li>
+    {% endif %}
+    <li class="page-item">
+      <a class="page-link">
+      {{data.number}}/{{data.paginator.num_pages}}</a>
+    </li>
+    {% if data.has_next %}
+    <li class="page-item">
+      <a class="page-link" 
+      href="{% url 'index' %}{{data.next_page_number }}">
+        next &raquo;</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link" 
+      href="{% url 'index' %}{{data.paginator.num_pages}}">
+        last &raquo;</a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link">next &raquo;</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link">last &raquo;</a>
+    </li>
+    {% endif %}
+  </ul>
+</body>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-1
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'hello',
+    'sns', # 追加したもの
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-2
+from django.db import models
+from django.contrib.auth.models import User
+
+# Messageクラス
+class Message(models.Model):
+  owner = models.ForeignKey(User, on_delete=models.CASCADE, \
+    related_name='message_owner')
+  content = models.TextField(max_length=1000)
+  good_count = models.IntegerField(default=0)
+  pub_date = models.DateTimeField(auto_now_add=True)
+  
+  def __str__(self):
+    return str(self.content) + ' (' + str(self.owner) + ')'
+
+  class Meta:
+    ordering = ('-pub_date',)
+
+# Goodクラス
+class Good(models.Model):
+  owner = models.ForeignKey(User, on_delete=models.CASCADE, \
+    related_name='good_owner')
+  message = models.ForeignKey(Message, on_delete=models.CASCADE)
+  pub_date = models.DateTimeField(auto_now_add=True)
+
+  def __str__(self):
+    return '"' + str(self.message) + '" (by ' + \
+      str(self.owner) + ')'
+  
+  class Meta:
+    ordering = ('-pub_date',)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-3
+from django.contrib import admin
+from .models import Message,Good
+
+admin.site.register(Message)
+admin.site.register(Good)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-4
+from django import forms
+from.models import Message,Good
+from django.contrib.auth.models import User
+
+# Messageのフォーム（未使用）
+class MessageForm(forms.ModelForm):
+  class Meta:
+    model = Message
+    fields = ['owner','content']
+
+# Goodのフォーム（未使用）
+class GoodForm(forms.ModelForm):
+  class Meta:
+    model = Good
+    fields = ['owner', 'message']
+
+# 投稿フォーム
+class PostForm(forms.Form):
+  content = forms.CharField(max_length=500, \
+    widget=forms.Textarea(attrs={'class':'form-control', 'rows':2}))
+    
+  def __init__(self, user, *args, **kwargs):
+    super(PostForm, self).__init__(*args, **kwargs)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-5
+from django.urls import path
+from . import views
+
+urlpatterns = [
+  path('', views.index, name='index'),
+  path('<int:page>', views.index, name='index'),
+  path('post', views.post, name='post'),
+  path('goods', views.goods, name='goods'),
+  path('good/<int:good_id>', views.good, name='good'),
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-6
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('hello/', include('hello.urls')),
+    path('sns/', include('sns.urls')), #☆
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-7
+from django.shortcuts import render
+from django.shortcuts import redirect
+from django.contrib.auth.models import User
+from django.contrib import messages
+from django.core.paginator import Paginator
+from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+
+from .models import Message,Good
+from .forms import PostForm
+
+# indexのビュー関数
+@login_required(login_url='/admin/login/')
+def index(request, page=1):
+  max = 10 #ページ当たりの表示数
+  form = PostForm(request.user)
+  msgs = Message.objects.all()
+  # ページネーションで指定ページを取得
+  paginate = Paginator(msgs, max)
+  page_items = paginate.get_page(page)
+
+  params = {
+    'login_user':request.user,
+    'form': form,
+    'contents':page_items,
+  }
+  return render(request, 'sns/index.html', params)
+
+# goodsのビュー関数
+@login_required(login_url='/admin/login/')
+def goods(request):
+  goods = Good.objects.filter(owner=request.user).all()
+
+  params = {
+    'login_user':request.user,
+    'contents':goods,
+  }
+  return render(request, 'sns/good.html', params)
+
+# メッセージのポスト処理
+@login_required(login_url='/admin/login/')
+def post(request):
+  # POST送信の処理
+  if request.method == 'POST':
+    # 送信内容の取得
+    content = request.POST['content']
+    # Messageを作成し設定して保存
+    msg = Message()
+    msg.owner = request.user
+    msg.content = content
+    msg.save()
+    return redirect(to='/sns/')
+  
+  else:
+    messages = Message.objects.filter(owner=request.user).all()
+    params = {
+      'login_user':request.user,
+      'contents':messages,
+    }
+    return render(request, 'sns/post.html', params)
+
+# goodボタンの処理
+@login_required(login_url='/admin/login/')
+def good(request, good_id):
+  # goodするMessageを取得
+  good_msg = Message.objects.get(id=good_id)
+  # 自分がメッセージにGoodした数を調べる
+  is_good = Good.objects.filter(owner=request.user) \
+    .filter(message=good_msg).count()
+  # ゼロより大きければ既にgood済み
+  if is_good > 0:
+    messages.success(request, '既にメッセージにはGoodしています。')
+    return redirect(to='/sns')
+  
+  # Messageのgood_countを１増やす
+  good_msg.good_count += 1
+  good_msg.save()
+  # Goodを作成し、設定して保存
+  good = Good()
+  good.owner = request.user
+  good.message = good_msg
+  good.save()
+  # メッセージを設定
+  messages.success(request, 'メッセージにGoodしました！')
+  return redirect(to='/sns')
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-8
+{% load static %}
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}{% endblock %}</title>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.css" 
+  rel="stylesheet" crossorigin="anonymous">
+</head>
+<body>
+  <nav class="navbar fixed-top navbar-expand navbar-light bg-light">
+  <ul style="width:100%" class="navbar-nav mr-auto">
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'index' %}">top</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'post' %}">post</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'goods' %}">good</a>
+    </li>
+    <li class="nav-item nav-link fw-bold text-primary">
+      logined: "{{login_user}}"</li>
+  </ul>
+  </nav>
+
+  <div class="container">
+    <div>
+      {% block header %}
+      {% endblock %}
+    </div>
+    <div class="content">
+      {% block content %}
+      {% endblock %}
+    </div>
+
+    <div class="my-3 text-center">
+      <span class="font-weight-bold">
+        <a href="/admin/logout?next=/sns/">
+          [ logout ]</a></span>
+      <span class="float-right">copyright 2023 
+        SYODA-Tuyano.</span>
+    </div>
+  </div>
+</body>
+</html>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-9
+{% extends 'sns/layout.html' %}
+
+{% block title %}Index{% endblock %}
+
+{% block header %}
+<h1 class="display-4 text-primary">SNS</h1>
+{% if messages %}
+<div class="alert alert-primary alert-dismissible fade show"
+  role="alert">
+  {% for message in messages %}
+    <p>{{ message }}</p>
+    {% endfor %}
+    <button type="button" class="btn-close" 
+      data-bs-dismiss="alert"></button>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<form action="{% url 'post' %}" method="post">
+  {% csrf_token %}
+  {{form.as_p}}
+  <button class="btn btn-primary">Post!</button>
+</form>
+<hr>
+<table class="table mt-3">
+    <tr><th>Messages</th></tr>
+{% for item in contents %}
+  <tr><td>
+  <p class="fs-4 my-0">
+    {{item.content}}</p>
+  <p class="my-0 text-end">
+    <span class="fs-5">
+      "{{item.owner}}" 
+    </span>
+    <span class="fs-6">
+      ({{item.pub_date}})
+    </span></p>
+  <p class="mt-1 fs-6 text-end">
+  <span class="h6 text-primary">
+    good={{item.good_count}}
+  </span>
+  <span class="float-right">
+    {% if item.owner != login_user %}
+      <a href="{% url 'good' item.id %}">
+        <button class="py-0 px-1 btn btn-outline-primary">
+          good!</button></a>
+    {% endif %}
+  </span>
+  </p>
+</td></tr>
+{% endfor %}
+</table>
+
+<ul class="pagination justify-content-center">
+  {% if contents.has_previous %}
+  <li class="page-item">
+    <a class="page-link" href="/sns/">
+      &laquo; first</a>
+  </li>
+  <li class="page-item">
+    <a class="page-link" 
+    href="/sns/{{contents.previous_page_number}}">
+      &laquo; prev</a>
+  </li>
+  {% else %}
+  <li class="page-item">
+    <a class="page-link">&laquo; first</a>
+  </li>
+  <li class="page-item">
+    <a class="page-link">&laquo; prev</a>
+  </li>
+  {% endif %}
+  <li class="page-item">
+    <a class="page-link">
+    {{contents.number}}/{{contents.paginator.num_pages}}</a>
+  </li>
+  {% if contents.has_next %}
+  <li class="page-item">
+    <a class="page-link" 
+    href="/sns/{{contents.next_page_number }}">
+      next &raquo;</a>
+  </li>
+  <li class="page-item">
+    <a class="page-link" 
+    href="/sns/{{contents.paginator.num_pages}}">
+      last &raquo;</a>
+  </li>
+  {% else %}
+  <li class="page-item">
+    <a class="page-link">next &raquo;</a>
+  </li>
+  <li class="page-item">
+    <a class="page-link">last &raquo;</a>
+  </li>
+  {% endif %}
+</ul>
+{% endblock %}
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-10
+{% extends 'sns/layout.html' %}
+
+{% block title %}Post{% endblock %}
+
+{% block header %}
+<h1 class="display-4 text-primary">Post</h1>
+<p  class="caption">※メッセージを投稿します。</p>
+{% endblock %}
+
+{% block content %}
+<table class="table mt-3">
+  <tr><th>Messages</th></tr>
+{% for item in contents %}
+  <tr><td>
+  <p class="fs-5 my-0">
+      {{item.content}}</p>
+  <p class="text-end my-0"> ({{item.pub_date}})</p>
+  <p class="text-end my-0 text-info">
+      good={{item.good_count}}
+  </p>
+  </p>
+</td></tr>
+{% endfor %}
+</table>
+{% endblock %}
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-11
+{% extends 'sns/layout.html' %}
+
+{% block title %}Goods{% endblock %}
+
+{% block header %}
+<h1 class="display-4 text-primary">Goods</h1>
+<p  class="caption">※Goodしたメッセージ</p>
+{% endblock %}
+
+{% block content %}
+<table class="table mt-3">
+  <tr><th>Messages</th></tr>
+{% for item in contents %}
+  <tr><td>
+  <p class="fs-5">{{item}}</p>
+</td></tr>
+{% endfor %}
+</table>
+{% endblock %}
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-12
+INSTALLED_APPS = [
+    ……略……
+    'sns',
+    'api',  #☆
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-13
+'django.middleware.csrf.CsrfViewMiddleware',
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-14
+'DIRS': [os.path.join(BASE_DIR, 'static')],
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-15
+# import os  冒頭に追加
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-16
+from django.db import models
+from django.contrib.auth.models import User
+
+# Messageクラス
+class Message2(models.Model):
+  owner = models.ForeignKey(User, on_delete=models.CASCADE, \
+    related_name='message2_owner')
+  owner_name = models.TextField(max_length=100)
+  content = models.TextField(max_length=1000)
+  good_count = models.IntegerField(default=0)
+  pub_date = models.DateTimeField(auto_now_add=True)
+  
+  def __str__(self):
+    return str(self.content) + ' (' + str(self.owner) + ')'
+
+  class Meta:
+    ordering = ('-pub_date',)
+
+# Goodクラス
+class Good2(models.Model):
+  owner = models.ForeignKey(User, on_delete=models.CASCADE, \
+    related_name='good2_owner')
+  message = models.ForeignKey(Message2, on_delete=models.CASCADE)
+  pub_date = models.DateTimeField(auto_now_add=True)
+
+  def __str__(self):
+    return '"' + str(self.message) + '" (by ' + \
+      str(self.owner) + ')'
+  
+  class Meta:
+    ordering = ('-pub_date',)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-17
+python manage.py makemigrations api
+python manage.py migrate
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-18
+from django.contrib import admin
+from .models import Message2,Good2
+
+admin.site.register(Message2)
+admin.site.register(Good2)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-19
+from django.shortcuts import render
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, JsonResponse
+from django.core.serializers import serialize
+from django.forms.models import model_to_dict
+
+from .models import Message2,Good2
+
+import json
+
+page_max = 10 #ページ当たりの表示数
+
+# indexのビュー関数
+@login_required(login_url='/admin/login/')
+def index(request):
+  return render(request, 'index.html')
+
+# メッセージをJSONで送信する
+@login_required(login_url='/admin/login/')
+def msgs(request, page=1):
+  msgs = Message2.objects.all()
+  # ページネーションで指定ページを取得
+  paginate = Paginator(msgs, page_max)
+  page_items = paginate.get_page(page)
+  serialized_data = serialize('json', page_items)
+  return HttpResponse(serialized_data, content_type='application/json')
+
+# ページ数を返す
+@login_required(login_url='/admin/login/')
+def plast(request):
+  msgs = Message2.objects.all()
+  paginate = Paginator(msgs, page_max)
+  last_page = paginate.num_pages
+  return JsonResponse({'result':"OK", 'value':last_page})
+
+# ユーザー名を返す
+@login_required(login_url='/admin/login/')
+def usr(request, usr_id=-1):
+  if usr_id == -1:
+    usr = request.user
+  else:
+    usr = User.objects.filter(id=usr_id).first()
+  return JsonResponse({'result':"OK", 'value':usr.username})
+
+# メッセージのポスト処理
+@login_required(login_url='/admin/login/')
+def post(request):
+  # POST送信の処理
+  if request.method == 'POST':
+    # 送信内容の取得
+    byte_data = request.body.decode('utf-8')
+    json_body = json.loads(byte_data)
+    
+    # Messageを作成し設定して保存
+    msg = Message2()
+    msg.owner = request.user
+    msg.owner_name = request.user.username
+    msg.content = json_body['content']
+    msg.save()
+    return HttpResponse("OK")
+  
+  else:
+    return HttpResponse("NG")
+
+# goodボタンの処理
+@login_required(login_url='/admin/login/')
+def good(request, good_id):
+  # goodするMessageを取得
+  good_msg = Message2.objects.get(id=good_id)
+  # 自分がメッセージにGoodした数を調べる
+  is_good = Good2.objects.filter(owner=request.user) \
+    .filter(message=good_msg).count()
+  # ゼロより大きければ既にgood済み
+  if is_good > 0:
+    return HttpResponse("NG")
+  
+  else:
+    # Messageのgood_countを１増やす
+    good_msg.good_count += 1
+    good_msg.save()
+    # Goodを作成する
+    good = Good2()
+    good.owner = request.user
+    good.message = good_msg
+    good.save()
+    return HttpResponse("OK")
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-20
+from django.urls import path
+from . import views
+
+urlpatterns = [
+  path('', views.index, name='index'),
+  path('plast', views.plast, name='plast'),
+  path('msgs/<int:page>', views.msgs, name='msgs'),
+  path('usr', views.usr, name='usr'),
+  path('usr/<int:usr_id>', views.usr, name='usr'),
+  path('post', views.post, name='post'),
+  path('good/<int:good_id>', views.good, name='good'),
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-21
+urlpatterns = [
+  path('admin/', admin.site.urls),
+  path('hello/', include('hello.urls')),
+  path('sns/', include('sns.urls')),
+  path('api/', include('api.urls')), #☆
+]
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-31
+const buildPath = process.env.BUILD_PATH || '../django_app/static';
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-32
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.css" 
+    rel="stylesheet" crossorigin="anonymous">
+      <title>React App</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
+</html>
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-33
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+
+root.render(
+  <React.StrictMode>
+    <nav className="navbar fixed-top navbar-expand navbar-light bg-light">
+    <ul style={{width:"100%"}} className="navbar-nav mr-auto">
+      <li className="nav-item">
+        <a className="nav-link" href="/">top</a>
+      </li>
+      <li className="nav-item">
+        <a className="nav-link" href="/post">post</a>
+      </li>
+      <li className="nav-item">
+        <a className="nav-link" href="/goods">good</a>
+      </li>
+    </ul>
+    </nav>
+
+    <div className="container">
+      
+      <App />
+
+      <div className="my-3 text-center">
+        <span className="font-weight-bold">
+          <a href="/admin/logout?next=/sns/">
+            [ logout ]</a></span>
+        <span className="float-right">copyright 2023 
+          SYODA-Tuyano.</span>
+      </div>
+    </div>
+  </React.StrictMode>
+);
+
+reportWebVitals();
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-34
+import React, { useState, useEffect } from 'react';
+
+function App() {
+  const [content, setContent] = useState('');
+  const [message, setMessage] = useState('');
+  const [msgs, setMsgs] = useState([]);
+  const [user, setUser] = useState('noname');
+  const [pnum, setPnum] = useState(1);
+  const [plast, setPlast] = useState(1);
+
+  const getMsgs = (num)=>{
+    getPlast();
+    setPnum(num);
+    fetch('http://localhost:8000/api/msgs/' + num)
+      .then(resp=> resp.json())
+    .then(res=>{
+      setMsgs(res);
+    });
+  }
+  const getUser = ()=> {
+    fetch('/api/usr')
+      .then(resp=> resp.json())
+    .then(res=>{
+      setUser(res.value);
+    });
+  }
+  const getPlast = ()=> {
+    fetch('/api/plast')
+      .then(resp=> resp.json())
+    .then(res=>{
+      setPlast(res.value);
+    });
+  }
+
+  const doChange = (event)=> {
+    setContent(event.target.value);
+  }
+  const doAction = (event)=> {
+    const data = {
+      content:content,
+    }
+    fetch('/api/post', {
+      method: 'post',
+      headers: {},
+      body: JSON.stringify(data),
+    }).then(resp=>resp.text())
+      .then(res=>{
+        getPlast();
+        getMsgs(1);
+        if (res == 'OK') {
+          setContent('');
+          setMessage('メッセージを投稿しました！');
+        }
+      });
+  }
+  const doGood = (event)=> {
+    fetch('/api/good/' + event.target.id)
+      .then(resp=> resp.text())
+      .then(res=>{
+        getMsgs(pnum);
+        if (res=='OK') {
+          setMessage('Good!しました。');
+        } else {
+          setMessage('既にGoodしています。');
+        }
+      });
+  }
+  const onFirst = (event)=> {
+    getMsgs(1);
+  }
+  const onPrev = (event)=> {
+    const p = pnum - 1 <= 1 ? 1 : pnum - 1;
+    getMsgs(p);
+  }
+  const onNext = (event)=> {
+    const p = pnum + 1 <= 1 ? 1 : pnum + 1;
+    getMsgs(p);
+  }
+  const onLast = (event)=> {
+    getMsgs(plast);
+  }
+
+  useEffect(()=>{
+    getUser();
+    getMsgs(1);
+  },[]);
+
+  return (
+    <div className="App">
+      <h1 className="display-4 text-primary">SNS</h1>
+      <p className="fs-3">logined: "{user}".</p>
+      <div>
+      {message != '' &&
+      <div className="alert alert-primary alert-dismissible fade show" role="alert">
+        <p>{ message }</p>
+        <button type="button" class="btn-close" 
+          data-bs-dismiss="alert"></button>
+      </div>
+      }
+      <div className="content">
+        <textarea className="form-control"
+          onChange={doChange} value={content}></textarea>
+        <button className="btn btn-primary"
+          onClick={doAction}>Post!</button>
+        <hr/>
+        <table className="table mt-3">
+          <tr><th>Messages</th></tr>
+          {msgs.map(obj=>(
+            <tr><td>
+            <p className="fs-4 my-0">
+              {obj.fields.content}</p>
+            <p className="my-0 text-end">
+              <span className="fs-5">
+                "{obj.fields.owner_name}" 
+              </span>
+              <span className="fs-6">
+                ( {obj.fields.pub_date} )
+              </span></p>
+              <p className="mt-1 fs-6 text-end">
+              <span className="h6 text-primary">
+                good= {obj.fields.good_count}
+              </span>
+              <span className="float-right">
+                <span className="mx-2">
+                  {console.log(obj.fields)}</span>
+                <button className="py-0 px-1 btn btn-outline-primary"
+                  id={obj.pk} onClick={doGood}>good!</button>
+              </span>
+            </p>
+          </td></tr>
+          )) }
+        </table>
+        <ul class="pagination justify-content-center">
+          <li class="page-item">
+            <a class="page-link" href="#" onClick={onFirst}>
+              &laquo; first</a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" onClick={onPrev} href="#">
+              &laquo; prev</a>
+          </li>
+          <li class="page-item">
+            <a class="page-link">
+            {pnum}/{plast}</a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" onClick={onNext} href="#">
+              next &raquo;</a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" onClick={onLast} href="#">
+              last &raquo;</a>
+          </li>
+        </ul>
+      </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-35
+from django.test import TestCase
+
+# Create your tests here.
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-36
+from django.test import TestCase
+
+class SnsTests(TestCase):
+    
+  def test_check(self):
+    x = True
+    self.assertTrue(x)
+    y = 100
+    self.assertGreater(y, 0)
+    arr = [10, 20, 30]
+    self.assertIn(20, arr)
+    nn = None
+    self.assertIsNone(nn)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-37
+def test_check(self):
+    x = True
+    self.assertTrue(x)
+    y = 0
+    self.assertGreater(y, 100)
+    nn = None
+    self.assertIsNone(nn)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-38
+from django.test import TestCase
+
+from django.contrib.auth.models import User
+from .models import Message
+
+class SnsTests(TestCase):
+        
+  def test_check(self):
+    usr = User.objects.first()
+    self.assertIsNotNone(usr)
+    msg = Message.objects.first()
+    self.assertIsNotNone(msg)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-39
+from django.test import TestCase
+
+from django.contrib.auth.models import User
+from .models import Message
+
+class SnsTests(TestCase):
+      
+  @classmethod
+  def setUpClass(cls):
+    super().setUpClass()
+    usr = cls.create_user()
+    cls.create_message(usr)
+
+  @classmethod
+  def create_user(cls):
+    # Create test user
+    User(username="test", password="test", is_staff=True, is_active=True).save()
+    usr = User.objects.filter(username='test').first()
+    return (usr)
+
+  @classmethod
+  def create_message(cls, usr):
+    # Create test message
+    Message(content='this is test message.', owner_id=usr.id).save()
+    Message(content='test', owner_id=usr.id).save()
+    Message(content="ok", owner_id=usr.id).save()
+    Message(content="ng", owner_id=usr.id).save()
+    Message(content='finish', owner_id=usr.id).save()
+
+  def test_check(self):
+    usr = User.objects.first()
+    self.assertIsNotNone(usr)
+    msg = Message.objects.first()
+    self.assertIsNotNone(msg)
+
+
+
+---------------------------------------------------------------------
+
+
+▼リスト5-40
+def test_check(self):
+  usr = User.objects.filter(username='test').first()
+
+  msg = Message.objects.filter(content="test").first()
+  self.assertIs(msg.owner_id, usr.id)
+  self.assertEqual(msg.owner.username, usr.username)
+
+  c = Message.objects.all().count()
+  self.assertIs(c,5)
+  
+  msgs = Message.objects.filter(content__contains="test").all()
+  self.assertIs(msgs.count(), 2)
+  
+  msg1 = Message.objects.all().first()
+  msg2 = Message.objects.all().last()
+  self.assertIsNot(msg1, msg2)
+
+
+
+
