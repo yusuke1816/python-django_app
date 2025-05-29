@@ -1,32 +1,22 @@
 {% load static %}
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-<head>
-  <meta charset="utf-8">
-  <title>{{title}}</title>
-  <!-- CSS only -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.css" 
-    rel="stylesheet" crossorigin="anonymous">
-</head>
-<body class="container">
-  <h1 class="display-4 text-primary">{{title}}</h1>
-  <p class="h6 my-3">{{msg}}</p>
-  <form action="{% url 'form' %}" method="post">
-    {% csrf_token %}
-    <label for="msg" class="form-label">message: </label>
-    <input id="msg" type="text" name="msg" class="form-control">
-    <input type="submit" value="click" class="btn btn-primary">
-  </form>
-</body><body class="container">
-  <h1 class="display-4 text-primary">{{title}}</h1>
-  <p class="h5 mt-4">{{message|safe}}</p>
-  <form action="{% url 'index' %}" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="click" class="btn btn-primary">
-  </form>
-</body>
-
+  <head>
+    <meta charset="utf-8" />
+    <title>{{title}}</title>
+    <!-- CSS only -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.css"
+      rel="stylesheet"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body class="container">
+    <h1 class="display-4 text-primary">{{title}}</h1>
+    <p class="h5 mt-4">{{message|safe}}</p>
+    <form action="{% url 'index' %}" method="post">
+      {% csrf_token %} {{ form.as_p }}
+      <input type="submit" class="btn btn-primary my-2" value="click" />
+    </form>
+  </body>
 </html>
-
-

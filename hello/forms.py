@@ -1,6 +1,6 @@
 from django import forms
 
 class HelloForm(forms.Form):
-  name = forms.CharField(label='name')
-  mail = forms.CharField(label='mail')
-  age = forms.IntegerField(label='age')
+  mail = forms.EmailField(label='mail', \
+    widget=forms.EmailInput(attrs={'class':'form-control'}))
+
