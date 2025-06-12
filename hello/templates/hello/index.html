@@ -13,10 +13,18 @@
   </head>
   <body class="container">
     <h1 class="display-4 text-primary">{{title}}</h1>
-    <p class="h5 mt-4">{{message|safe}}</p>
+    <p class="h5 mt-4">{{result|safe}}</p>
     <form action="{% url 'index' %}" method="post">
-      {% csrf_token %} {{ form.as_p }}
-      <input type="submit" class="btn btn-primary my-2" value="click" />
+      {% csrf_token %}
+      <table>
+        {{ form.as_p }}
+        <tr>
+          <td></td>
+          <td>
+            <input type="submit" class="btn btn-primary my-2" value="click" />
+          </td>
+        </tr>
+      </table>
     </form>
   </body>
 </html>

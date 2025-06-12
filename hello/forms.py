@@ -1,6 +1,4 @@
 from django import forms
-
-class HelloForm(forms.Form):
-  mail = forms.EmailField(label='mail', \
-    widget=forms.EmailInput(attrs={'class':'form-control'}))
-
+class SessionForm(forms.Form):
+  session = forms.CharField(label='session', required=False, \
+    widget=forms.TextInput(attrs={'class':'form-control'}))
