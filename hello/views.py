@@ -9,6 +9,28 @@ from .forms import FriendForm  #この文を新たに追記
 from django.views.generic import ListView
 from django.views.generic import DetailView
 
+
+from .forms import FindForm  #この文を追記
+
+def find(request):
+  if (request.method == 'POST'):
+    form = FindForm(request.POST)
+    find = request.POST['find']
+    data = Friend.objects.filter(name=find)
+    msg = 'Result: ' + str(data.count())
+  else:
+    msg = 'search words...'
+    form = FindForm()
+    data =Friend.objects.all()
+  params = {
+    'title': 'Hello',
+    'message': msg,
+    'form':form,
+    'data':data,
+  }
+  return render(request, 'hello/find.html', params)
+
+
 class FriendList(ListView):
   model = Friend
 
